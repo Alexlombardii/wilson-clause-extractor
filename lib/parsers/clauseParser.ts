@@ -2,42 +2,73 @@ interface Clause {
   number: string;
   title: string;
   content: string;
-  subClauses?: Clause[];
+  schedule?: string;
 }
 
 export function extractClauses(text: string): Clause[] {
-  // Pattern to match main clauses: \n\n{number}. {Title}\n\n
-  const mainClausePattern = /\n\n(\d+)\. ([^\n]+)\n\n/g;
   const clauses: Clause[] = [];
-  let lastIndex = 0;
-  let match;
+  const lines = text.split('\n');
+  let currentClause: Clause | null = null;
+  let currentContent: string[] = [];
+  let currentSchedule: string | null = null;
 
-  // Find all main clauses
-  while ((match = mainClausePattern.exec(text)) !== null) {
-    const [fullMatch, number, title] = match;
-    const startIndex = match.index + fullMatch.length;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     
-    // If this isn't the first match, save the previous clause's content
-    if (clauses.length > 0) {
-      const previousClause = clauses[clauses.length - 1];
-      previousClause.content = text.slice(lastIndex, match.index).trim();
+    // Check for schedule headers
+    const scheduleMatch = line.match(/^# SCHEDULE (\d+)/);
+    if (scheduleMatch) {
+      currentSchedule = `S${scheduleMatch[1]}`;
+      console.log('Entering schedule:', currentSchedule);
+      continue;
     }
 
-    clauses.push({
-      number,
-      title,
-      content: '',
-      subClauses: []
-    });
+    // Strictly match: # + number + . + space
+    const clauseMatch = line.match(/^#\s+(\d+)\. (.+)/);
+    
+    if (clauseMatch) {
+      // If we were building a previous clause, save it
+      if (currentClause) {
+        currentClause.content = currentContent.join('\n');  // Remove trim()
+        console.log(`Clause ${currentClause.number} content:`, currentContent);
+        clauses.push(currentClause);
+      }
+      
+      // Start a new clause
+      const clauseNumber = currentSchedule 
+        ? `${currentSchedule}.${clauseMatch[1]}` 
+        : clauseMatch[1];
 
-    lastIndex = startIndex;
+      currentClause = {
+        number: clauseNumber,
+        title: clauseMatch[2],
+        content: '',
+        schedule: currentSchedule || undefined
+      };
+      currentContent = [];
+      
+      console.log('Found new clause:', clauseNumber, clauseMatch[2]);
+    } else if (currentClause) {  // Removed line.trim() check to keep all lines
+      currentContent.push(line);
+      console.log(`Adding line to clause ${currentClause.number}:`, line);
+    }
   }
 
-  // Get content for the last clause
-  if (clauses.length > 0) {
-    const lastClause = clauses[clauses.length - 1];
-    lastClause.content = text.slice(lastIndex).trim();
+  // Don't forget to add the last clause
+  if (currentClause) {
+    currentClause.content = currentContent.join('\n');  // Remove trim()
+    console.log(`Final clause ${currentClause.number} content:`, currentContent);
+    clauses.push(currentClause);
   }
 
   return clauses;
-} 
+}
+
+// Usage example:
+const parsedText = "your PDF text here";
+const clauses = extractClauses(parsedText);
+console.log(clauses); // To see what we found 
+
+clauses.forEach(clause => {
+  console.log(`Clause ${clause.number}: ${clause.title}`);
+}); 

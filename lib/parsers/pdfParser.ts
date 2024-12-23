@@ -18,7 +18,16 @@ export async function parsePDF(pdfUrl: string) {
     });
 
     const documents = await reader.loadData(tempPath);
-    return documents[0].text;
+    
+    // Let's log the number of documents and their lengths
+    console.log('Number of documents:', documents.length);
+    documents.forEach((doc, index) => {
+      console.log(`Document ${index} length:`, doc.text.length);
+    });
+
+    // If there are multiple documents, we should combine them
+    const fullText = documents.map(doc => doc.text).join('\n\n');
+    return fullText;
   } catch (error) {
     console.error('Error parsing PDF:', error);
     throw error;

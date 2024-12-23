@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { parsePDF } from '@/lib/parsers/pdfParser';
+import { extractClauses } from '@/lib/parsers/clauseParser';
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +14,12 @@ export async function POST(request: Request) {
     }
 
     const parsedContent = await parsePDF(pdfUrl);
-    return NextResponse.json({ content: parsedContent });
+    const clauses = extractClauses(parsedContent);
+
+    return NextResponse.json({ 
+      content: parsedContent,
+      clauses: clauses
+    });
     
   } catch (error) {
     console.error('Parse error:', error);

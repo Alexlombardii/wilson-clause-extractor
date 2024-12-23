@@ -86,8 +86,8 @@ export default function Upload() {
         throw new Error('Parsing failed')
       }
 
-      const { content } = await parseResponse.json()
-      setParsedContent(content)
+      const { content, clauses } = await parseResponse.json()
+      setParsedContent({ fullText: content, clauses: clauses })
       console.log('Parsed content:', content)
       alert('File uploaded and parsed successfully!')
       setFile(null)
@@ -175,9 +175,26 @@ export default function Upload() {
 
       {parsedContent && (
         <div className="mt-8 max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold mb-4">Parsed Content (Debug View)</h2>
+          <h2 className="text-xl font-semibold mb-4">Found Clauses</h2>
+          <div className="mb-8 space-y-6">
+            {parsedContent.clauses.map((clause: any, index: number) => (
+              <div 
+                key={`${clause.number}-${clause.title}-${index}`} 
+                className="border rounded-lg p-4 shadow-sm"
+              >
+                <h3 className="text-lg font-semibold mb-2">
+                  {clause.number}: {clause.title}
+                </h3>
+                <pre className="whitespace-pre-wrap bg-gray-50 p-3 rounded text-sm">
+                  {clause.content}
+                </pre>
+              </div>
+            ))}
+          </div>
+          
+          <h2 className="text-xl font-semibold mb-4">Full Parsed Content</h2>
           <pre className="bg-gray-100 p-4 rounded-lg overflow-auto max-h-96 text-sm">
-            {JSON.stringify(parsedContent, null, 2)}
+            {JSON.stringify(parsedContent.fullText, null, 2)}
           </pre>
         </div>
       )}
