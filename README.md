@@ -84,3 +84,4 @@ Required environment variables:
 5. Stage 3: Vectorise clause chunks and store in Vector db: 11:30-11:50
 6. Stage 4: RAG of Clauses: 11:50-12:00
 7. Attempted deployment: 12:00-12:15 (Worried about changing too much of the working code libraries)
+8. Clean ReadME: 12:15-12:30
