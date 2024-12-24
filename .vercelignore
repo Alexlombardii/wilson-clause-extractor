@@ -1,0 +1,16 @@
+# Test files
+__tests__
+*.test.ts
+*.test.tsx
+
+# Development files
+README.md
+.gitignore
+.git
+
+# Temporary files
+temp.pdf
+*.pdf
+
+# Environment files (you'll set these in Vercel dashboard)
+.env* 

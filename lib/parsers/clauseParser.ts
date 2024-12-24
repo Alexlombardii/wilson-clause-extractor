@@ -11,10 +11,53 @@ export function extractClauses(text: string): Clause[] {
   let currentClause: Clause | null = null;
   let currentContent: string[] = [];
   let currentSchedule: string | null = null;
+  let currentPageSize = 0;
+  const PAGE_SIZE_LIMIT = 3000; // Roughly one page worth of characters
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     
+    // Check page size and create new chunk if needed
+    if (currentPageSize > PAGE_SIZE_LIMIT) {
+      if (currentClause) {
+        // Save current chunk
+        currentClause.content = currentContent.join('\n');
+        clauses.push(currentClause);
+        
+        // Start new chunk with same clause info
+        currentContent = [];
+        currentClause = {
+          number: currentClause.number,
+          title: currentClause.title,
+          content: '',
+          schedule: currentClause.schedule
+        };
+        currentPageSize = 0;
+      }
+    }
+
+    // Add to current page size
+    currentPageSize += line.length;
+    
+    // Check for page breaks and create new chunk
+    if (line.includes('Page') || line.includes('*** End of Page ***')) {
+      if (currentClause) {
+        // Save current chunk
+        currentClause.content = currentContent.join('\n');
+        clauses.push(currentClause);
+        
+        // Start new chunk with same clause info but empty content
+        currentContent = [];
+        currentClause = {
+          number: currentClause.number,
+          title: currentClause.title,
+          content: '',
+          schedule: currentClause.schedule
+        };
+      }
+      continue;
+    }
+
     // Check for schedule headers
     const scheduleMatch = line.match(/^# SCHEDULE (\d+)/);
     if (scheduleMatch) {

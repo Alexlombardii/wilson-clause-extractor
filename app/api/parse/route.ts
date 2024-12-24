@@ -20,11 +20,11 @@ export async function POST(request: Request) {
     console.log('PDF parsed successfully');
 
     console.log('Extracting clauses...');
-    const clauses = extractClauses(parsedContent);
-    console.log(`Found ${clauses.length} clauses`);
+    const subClauses = extractClauses(parsedContent);
+    console.log(`Found ${subClauses.length} sub-clauses`);
 
     console.log('Vectorizing clauses...');
-    const vectorizedClauses = await vectorizeClauses(clauses);
+    const vectorizedClauses = await vectorizeClauses(subClauses);
     console.log('Clauses vectorized');
 
     console.log('Storing in AstraDB...');
