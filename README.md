@@ -57,6 +57,7 @@ Required environment variables:
    - Database:
    - ASTRA_DB_APPLICATION_TOKEN=
    - ASTRA_DB_API_ENDPOINT=
+   - ASTRA_DB_KEYSPACE=
    - ASTRA_DB_COLLECTION=
 
 ## Key Features
