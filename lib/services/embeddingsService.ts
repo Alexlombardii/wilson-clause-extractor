@@ -1,19 +1,17 @@
-import { OpenAIApi, Configuration } from 'openai';
+import OpenAI from 'openai';
 
-// Initialize OpenAI client
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 export async function createEmbedding(text: string) {
   try {
-    const response = await openai.createEmbedding({
+    const response = await openai.embeddings.create({
       model: "text-embedding-ada-002",
       input: text,
     });
 
-    return response.data.data[0].embedding;
+    return response.data[0].embedding;
   } catch (error) {
     console.error('Error creating embedding:', error);
     throw error;
