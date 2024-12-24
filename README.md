@@ -74,6 +74,12 @@ Required environment variables:
 3. UI/UX improvements
 5. Deployment libraries
 
-## Notes
+## Time allocation
 
-Built in 2.75/3.0 hours as part of WilsonAI technical
+1. Start: 9:35
+2. Planning + initial setup: 9:35-9:45
+3. Stage 1: Upload pdfs + parsing pdf: 10:00-10:20
+4. Stage 2: Split Clauses based on structure: 10:20-11:30
+5. Stage 3: Vectorise clause chunks and store in Vector db: 11:30-11:50
+6. Stage 4: RAG of Clauses: 11:50-12:00
+7. Attempted deployment: 12:00-12:15 (Worried about changing too much of the working code libraries)
